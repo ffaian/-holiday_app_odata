@@ -1,0 +1,3 @@
+service {
+	"Holiday.Holiday" as "Holidays";
+}

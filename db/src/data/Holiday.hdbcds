@@ -1,0 +1,19 @@
+context Holiday {
+    entity Province_md {
+        key Country  : String(2);
+        key Province : String(3);
+            Name     : String(60);
+    };
+
+    entity Holiday_md {
+        key Holiday_Id : String(2);
+        key Langu      : String(2);
+            Name       : String(60);
+    };
+
+    entity Holiday {
+        key date       : LocalDate;
+        key Province   : String(3);
+            Holiday_Id : String(2);
+    };
+};

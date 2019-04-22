@@ -1,0 +1,70 @@
+{
+	"format_version": 1,
+	"imports": [{
+		"target_table": "Holiday.Province_md",
+		"source_data": {
+			"data_type": "CSV",
+			"file_name": "Province_md.csv",
+			"has_header": false,
+			"dialect": "HANA",
+			"type_config": {
+				"delimiter": ","
+			}
+		},
+		"import_settings": {
+			"import_columns": ["Country",
+				"Province",
+				"Name"
+			]
+		},
+		"column_mappings": {
+			"Country": 1,
+			"Province": 2,
+			"Name": 3
+		}
+	}, {
+		"target_table": "Holiday.Holiday_md",
+		"source_data": {
+			"data_type": "CSV",
+			"file_name": "Holiday_md.csv",
+			"has_header": false,
+			"dialect": "HANA",
+			"type_config": {
+				"delimiter": ","
+			}
+		},
+		"import_settings": {
+			"import_columns": ["Holiday_Id",
+				"Langu",
+				"Name"
+			]
+		},
+		"column_mappings": {
+			"Holiday_Id": 1,
+			"Langu": 2,
+			"Name": 3
+		}
+	}, {
+		"target_table": "Holiday.Holiday",
+		"source_data": {
+			"data_type": "CSV",
+			"file_name": "Holiday.csv",
+			"has_header": false,
+			"dialect": "HANA",
+			"type_config": {
+				"delimiter": ","
+			}
+		},
+		"import_settings": {
+			"import_columns": ["date",
+				"Province",
+				"Holiday_Id"
+			]
+		},
+		"column_mappings": {
+			"date": 1,
+			"Province": 2,
+			"Holiday_Id": 3
+		}
+	}]
+}
