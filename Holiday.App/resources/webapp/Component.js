@@ -2,7 +2,7 @@ sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"sap/ui/Device",
 	"app/holiday/Holiday/App/model/models",
-	"sap/ui/model/odata/ODataModel",
+	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/model/json/JSONModel"
 ], function (UIComponent, Device, models, ODataModel, JSONModel) {
 	"use strict";
@@ -12,8 +12,11 @@ sap.ui.define([
 		metadata: {
 			manifest: "json",
 			"config": {
-//								"serviceUrl" : "../xsodata/service.xsodata"
-				"serviceUrl": "../xsjs/Holiday_JSON.xsjs"
+				"serviceUrl_odata": "../xsodata/service.xsodata",
+				//				https://hxehost:51061/xsodata/service.xsodata/$metadata
+				"serviceUrl_odata2": "../xsodata/service.xsodata/$metadata",
+				"serviceUrl": "../xsjs/Holiday_JSON.xsjs",
+				"sizeLimit": 500
 			}
 		},
 
@@ -29,10 +32,30 @@ sap.ui.define([
 			// enable routing
 			this.getRouter().initialize();
 
-//			var oModel = new ODataModel(
-							var oModel = new JSONModel(
-				this.getMetadata().getConfig().serviceUrl);
-			this.setModel(oModel);
+			var oModel_odata = new ODataModel(
+				this.getMetadata().getConfig().serviceUrl_odata);
+			oModel_odata.attachMetadataLoaded(null, function () {
+				var oMetadata = oModel_odata.getServiceMetadata();
+				sap.m.MessageToast.show("whatever dude");
+				console.log(oMetadata);
+			}, null);
+			// oModel.attachMetadataLoaded(null, {
+			// 	success: function (oData, oResponse) {
+			//                 // run the success code
+			//                 },
+			//                 error: function (oError) {
+			//                  // run the failed code.
+			//                 }
+			// });
+
+			//oModel_odata.setDefaultBindingMode("TwoWay");
+			oModel_odata.setSizeLimit(this.getMetadata().getConfig().sizeLimit);
+
+			this.setModel(oModel_odata);
+
+			// var oModel = new JSONModel(
+			// 	this.getMetadata().getConfig().serviceUrl);
+			// this.setModel(oModel);
 
 			// set the device model
 			//			this.setModel(models.createDeviceModel(), "device");

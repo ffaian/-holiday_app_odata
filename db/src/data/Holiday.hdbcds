@@ -12,7 +12,7 @@ context Holiday {
     };
 
     entity Holiday {
-        key date       : LocalDate;
+        key zDate       : LocalDate;
         key Province   : String(3);
             Holiday_Id : String(2);
     };

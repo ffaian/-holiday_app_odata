@@ -56,13 +56,13 @@
 			}
 		},
 		"import_settings": {
-			"import_columns": ["date",
+			"import_columns": ["zDate",
 				"Province",
 				"Holiday_Id"
 			]
 		},
 		"column_mappings": {
-			"date": 1,
+			"zDate": 1,
 			"Province": 2,
 			"Holiday_Id": 3
 		}

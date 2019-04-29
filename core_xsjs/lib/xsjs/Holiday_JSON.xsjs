@@ -1,4 +1,4 @@
-var select_my_query = ("select * from \"Holiday.Holiday\" order by \"date\"");
+var select_my_query = ("select \"zDate\", \"Province\", \"Holiday_Id\" * from \"Holiday.Holiday\" order by \"zDate\"");
 
 function close(closables) {
 	var closable;
@@ -22,7 +22,7 @@ function getData() {
 
 		while (resultSet.next()) {
 			myData = {};
-			myData.date = resultSet.getString(1);
+			myData.zDate = resultSet.getString(1);
 			myData.Province = resultSet.getString(2);
 			myData.Holiday_Id = resultSet.getString(3);
 			myDataList.push(myData);

@@ -62,7 +62,13 @@ sap.ui.jsview("app.holiday.Holiday.App.view.Master", {
 		var oTemplate = new sap.m.ColumnListItem({
 			press: [oController.onListPress, oController],
 			cells: [new sap.m.ObjectIdentifier({
-				text: "{date}"
+				text: {
+					path : "zDate",
+					type : 'sap.ui.model.odata.type.DateTime',
+					constraints : {
+						displayFormat : 'Date'
+					}
+				}
 			}), new sap.m.ObjectIdentifier({
 				text: {
 					path: "Province",
@@ -144,7 +150,7 @@ sap.ui.jsview("app.holiday.Holiday.App.view.Master", {
 			headerToolbar: oToolBar
 		});
 		oTable.setMode(sap.m.ListMode.SingleSelectMaster);
-		oTable.bindItems("/Holidays", oTemplate);
+		oTable.bindItems("/Holidays", oTemplate);		
 
 		var oPageMaster = new sap.m.Page("mainPage", {
 			//			title : "Weather Impact - this is the JS view",

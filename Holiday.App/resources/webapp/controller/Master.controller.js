@@ -77,6 +77,8 @@ sap.ui.define([
 			this.oInputDate = new sap.m.DatePicker("myDateInput", {
 				displayFormat: "MMM-dd-YYYY",
 				valueFormat: "yyyy-MM-dd",
+				//				valueFormat: "yyyy-mm-ddThh:mm:ss",            
+				//				valueFormat:  sap.ui.model.odata.type.DateTime, // fuck'n hell
 				required: true
 			});
 
@@ -203,7 +205,7 @@ sap.ui.define([
 						titleStyle: sap.ui.core.TitleLevel.H2
 					}),
 					new sap.m.Label({
-						text: "date"
+						text: "Date"
 					}), new sap.m.Input({
 						value: oModel.getProperty("date", oItems[oIndex].getBindingContext()),
 						editable: false
@@ -237,15 +239,23 @@ sap.ui.define([
 						sap.ui.getCore().byId("myHolidayCombo").getSelectedItem()) {
 						//window.oJSView.getController().mySystemInfo.CheckConnection();
 						var oEntry = {};
-						oEntry.DATE = oModel.getProperty("date", oItems[oIndex].getBindingContext());
-						oEntry.PROVINCE = oModel.getProperty("Province", oItems[oIndex].getBindingContext());
-						oEntry.HOLIDAY_ID = sap.ui.getCore().byId("myHolidayCombo").getSelectedItem().getBindingContext().getObject().HOLIDAY_ID;
+						oEntry.date = oModel.getProperty("date", oItems[oIndex].getBindingContext());
+						oEntry.Province = oModel.getProperty("Province", oItems[oIndex].getBindingContext());
+						oEntry.Holiday_Id = sap.ui.getCore().byId("myHolidayCombo").getSelectedItem().getBindingContext().getObject().HOLIDAY_ID;
 						// Post data to the server
-						sap.ui.getCore().byId("mytable").getModel().loadData("../xsjs/editdata.xsjs", oEntry,
-							true, 'POST');
-						// Update JSON model 
-						oModel.getData().Holidays[oIndex].HOLIDAY_ID = oEntry.HOLIDAY_ID;
-						oModel.refresh(true);
+						// this is old method using XSJS (Java-side) file
+						// sap.ui.getCore().byId("mytable").getModel().loadData("../xsjs/editdata.xsjs", oEntry,
+						// 	true, 'POST');
+						// // Update JSON model 
+						// oModel.getData().Holidays[oIndex].HOLIDAY_ID = oEntry.HOLIDAY_ID;
+						// oModel.refresh(true);
+						// this is new method using odata service notation
+						oModel.update(oItems[oIndex].getBindingContext().sPath, oEntry, null, function (oData) {
+							sap.m.MessageToast.show("Record Updated Successfully");
+
+						}, function (err) {
+							sap.m.MessageToast.show("Error Updating. Check it again");
+						});
 						openUpdateDialog.close();
 					} else {
 						sap.m.MessageToast.show("Please check the form entries");
@@ -258,6 +268,7 @@ sap.ui.define([
 		/** *** CREATE Operation **** **/
 		openCreateDialog: function (oController) {
 			//window.oJSView.getController().mySystemInfo.CheckConnection();
+			var oModel = sap.ui.getCore().byId("mytable").getModel();
 			var oCreateDialog = new sap.m.Dialog();
 			oCreateDialog.setTitle("Create Record");
 			oCreateDialog.setContentWidth("600px");
@@ -277,7 +288,7 @@ sap.ui.define([
 						titleStyle: sap.ui.core.TitleLevel.H2
 					}),
 					new sap.m.Label({
-						text: "date",
+						text: "Date",
 						required: true
 					}), this.oInputDate,
 					new sap.m.Label({
@@ -314,15 +325,72 @@ sap.ui.define([
 						sap.ui.getCore().byId("myHolidayCombo").getSelectedItem() &&
 						sap.ui.getCore().byId("myProvinceCombo").getSelectedItem()) {
 						//window.oJSView.getController().mySystemInfo.CheckConnection();
+						var oEntry_new = oModel.getData("/Holidays('1')");
 						var oEntry = {};
-						oEntry.DATE = sap.ui.getCore().byId("myDateInput").getValue();
-						oEntry.PROVINCE = sap.ui.getCore().byId("myProvinceCombo").getSelectedItem().getBindingContext().getObject().REGION;
-						oEntry.HOLIDAY_ID = sap.ui.getCore().byId("myHolidayCombo").getSelectedItem().getBindingContext().getObject().HOLIDAY_ID;
+						//oEntry.zDate = sap.ui.getCore().byId("myDateInput").getDateValue();
+						// oEntry.zDate = oController.formatter.formatOData_Date(sap.ui.getCore().byId("myDateInput").getValue());
+						oEntry.zDate = new Date(sap.ui.getCore().byId("myDateInput").getValue());
+						oEntry.Province = sap.ui.getCore().byId("myProvinceCombo").getSelectedItem().getBindingContext().getObject().REGION;
+						oEntry.Holiday_Id = sap.ui.getCore().byId("myHolidayCombo").getSelectedItem().getBindingContext().getObject().HOLIDAY_ID;
 						// Post data to the server
-						sap.ui.getCore().byId("mytable").getModel().loadData("../xsjs/adddata.xsjs", oEntry,
-							true, 'POST');
-						sap.ui.getCore().byId("mytable").getModel().getData().Holidays.push(oEntry);
-						sap.ui.getCore().byId("mytable").getModel().refresh(true);
+						// sap.ui.getCore().byId("mytable").getModel().loadData("../xsjs/adddata.xsjs", oEntry,
+						// 	true, 'POST');
+						// sap.ui.getCore().byId("mytable").getModel().getData().Holidays.push(oEntry);
+						// sap.ui.getCore().byId("mytable").getModel().refresh(true);
+						// oModel.create("/Holidays", oEntry, {
+						// 	method: "POST",
+						// 	success: function (data) {
+						// 		sap.m.MessageToast.show("Record Created Successfully");
+						// 	},
+						// 	error: function (response) {
+						// 		sap.m.MessageToast.show("Error: " + response);
+						// 	}
+						// });
+						// oModel.create("/Holidays", oEntry, function () {
+						// 	sap.m.MessageToast.show("Record Created Successfully");
+						// }, function (err) {
+						// 	sap.m.MessageToast.show("Error: " + err);
+						// });
+
+						// SAPUI5 formatters
+						var dateFormat = sap.ui.core.format.DateFormat.getDateInstance({
+							pattern: "dd/MM/yyyy"
+						});
+						var timeFormat = sap.ui.core.format.DateFormat.getTimeInstance({
+							pattern: "KK:mm:ss a"
+						});
+						// timezoneOffset is in hours convert to milliseconds
+						var TZOffsetMs = new Date(0).getTimezoneOffset() * 60 * 1000;
+						// format date and time to strings offsetting to GMT
+						var dateStr = dateFormat.format(new Date(sap.ui.getCore().byId("myDateInput").getDateValue().getTime() + TZOffsetMs)); //05-12-2012
+						//var timeStr = timeFormat.format(new Date(DepartureTime.ms + TZOffsetMs)); //11:00 AM
+						//parse back the strings into date object back to Time Zone
+						var parsedDate = new Date(dateFormat.parse(dateStr).getTime() - TZOffsetMs); //1354665600000  
+						//var parsedTime = new Date(timeFormat.parse(timeStr).getTime() - TZOffsetMs); //39600000
+						
+						oEntry.zDate = parsedDate; 
+						
+
+						// create an entry of the Products collection with the specified properties and values
+						var oContext = oModel.createEntry("/Holidays", {
+							properties: {
+								zDate: oEntry.zDate,
+								Province: oEntry.Province,
+								Holiday_Id: oEntry.Holiday_Id
+							}
+						});
+						// submit the changes (creates entity at the backend)
+						oModel.submitChanges({
+							success: function (data) {
+								sap.m.MessageToast.show("Record Created Successfully");
+							},
+							error: function (response) {
+								sap.m.MessageToast.show("Error: " + response);
+							}
+						});
+						// delete the created entity
+						oModel.deleteCreatedEntry(oContext);
+
 						oCreateDialog.close();
 					} else {
 						sap.m.MessageToast.show("Please check the form entries");
