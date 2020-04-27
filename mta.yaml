@@ -31,6 +31,17 @@ modules:
           name: core-xsjs-backend
           forwardAuthToken: true
         group: destinations
+  - name: Holiday_md.app
+    type: html5
+    path: Holiday_md.app
+    requires:
+      - name: UAA-service
+      - name: core_xsjs_api
+        group: destinations
+        properties:
+          url: '~{url}'
+          name: core-xsjs-backend
+          forwardAuthToken: true
 resources:
   - name: hdi_db
     properties:

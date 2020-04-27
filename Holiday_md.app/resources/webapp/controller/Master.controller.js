@@ -9,7 +9,7 @@ sap.ui.define([
 ], function (Controller, Filter, JSONModel, formatter, types, Validator, ValueState, SystemInfo) {
 	"use strict";
 
-	return Controller.extend("app.holiday.Holiday.App.controller.Master", {
+	return Controller.extend("Holiday.master_data.Holiday_md.app.controller.Master", {
 
 		formatter: formatter,
 		types: types,
@@ -273,12 +273,6 @@ sap.ui.define([
 			oCreateDialog.setTitle("Create Record");
 			oCreateDialog.setContentWidth("600px");
 			// default values
-			var oDateFormat = sap.ui.core.format.DateFormat.getInstance({
-				pattern: "yyyy-MM-dd"
-			});
-			this.oModelVal.setProperty("/myDate", oDateFormat.format(new Date()));
-			this.oProvincescombo.setSelectedKey("99");
-			this.oHolidayCombo.setSelectedKey("1");
 			var oSimpleForm = new sap.ui.layout.form.SimpleForm({
 				editable: true,
 				maxContainerCols: 2,
@@ -288,23 +282,14 @@ sap.ui.define([
 						titleStyle: sap.ui.core.TitleLevel.H2
 					}),
 					new sap.m.Label({
-						text: "Date",
+						text: "Id",
 						required: true
 					}), this.oInputDate,
 					new sap.m.Label({
 						text: ""
 					}), new sap.m.Label({
-						text: "Province",
+						text: "Name",
 						required: true
-					}), this.oProvincescombo,
-					new sap.m.Label({
-						text: ""
-					}), new sap.m.Label({
-						text: "Holiday",
-						required: true
-					}), this.oHolidayCombo,
-					new sap.m.Label({
-						text: ""
 					})
 				]
 			});
@@ -327,8 +312,8 @@ sap.ui.define([
 						//window.oJSView.getController().mySystemInfo.CheckConnection();
 						//var oEntry_new = oModel.getData("/Holidays('1')");
 						var oEntry = {};
-						//oEntry.zDate = sap.ui.getCore().byId("myDateInput").getValue();
-						oEntry.zDate = sap.ui.getCore().byId("myDateInput").getDateValue();
+						oEntry.zDate = sap.ui.getCore().byId("myDateInput").getValue();
+						//oEntry.zDate = sap.ui.getCore().byId("myDateInput").getDateValue();
 						//oEntry.zDate = oController.formatter.formatOData_Date(sap.ui.getCore().byId("myDateInput").getValue());						oEntry.zDate = new Date(sap.ui.getCore().byId("myDateInput").getValue());
 						oEntry.Province = sap.ui.getCore().byId("myProvinceCombo").getSelectedItem().getBindingContext().getObject().REGION;
 						oEntry.Holiday_Id = sap.ui.getCore().byId("myHolidayCombo").getSelectedItem().getBindingContext().getObject().HOLIDAY_ID;
@@ -337,14 +322,6 @@ sap.ui.define([
 						// 	true, 'POST');
 						// sap.ui.getCore().byId("mytable").getModel().getData().Holidays.push(oEntry);
 						// sap.ui.getCore().byId("mytable").getModel().refresh(true);
-						oModel.create("/Holidays", oEntry, {
-							success: function (data) {
-								sap.m.MessageToast.show("Record Created Successfully");
-							},
-							error: function (response) {
-								sap.m.MessageToast.show("Error: " + response);
-							}
-						});
 						// oModel.create("/Holidays", oEntry, {
 						// 	method: "POST",
 						// 	success: function (data) {
@@ -355,49 +332,28 @@ sap.ui.define([
 						// 	}
 						// });
 
-						// var mParams = {};
-						// mParams.success = function () {
-						// 	sap.m.MessageToast.show("Create successful");
-						// };
-						// mParams.error = function (oError) {
-						// 	if (oError.statusCode === 500 || oError.statusCode === 400) {
-						// 		var errorRes = JSON.parse(oError.responseText);
-						// 		return;
-						// 	} else {
-						// 		sap.m.MessageBox.alert(oError.response.statusText);
-						// 		return;
-						// 	}
-						// };
-						// var oEntity = {
-						// 	"zDate": oEntry.zDate,
-						// 	"Province": oEntry.Province,
-						// 	"Holiday_Id": oEntry.Holiday_Id
-						// };
-						// oModel.read("/Holidays");
-						// oModel.create("/Holidays", oEntity, mParams);
+						var mParams = {};
+						mParams.success = function () {
+							sap.m.MessageToast.show("Create successful");
+						};
+						mParams.error = function (oError) {
+							if (oError.statusCode === 500 || oError.statusCode === 400) {
+								var errorRes = JSON.parse(oError.responseText);
+								return;
+							} else {
+								sap.m.MessageBox.alert(oError.response.statusText);
+								return;
+							}
+						};
+						var oEntity = {
+							"zDate": oEntry.zDate,
+							"Province": oEntry.Province,
+							"Holiday_Id": oEntry.Holiday_Id
+						};
+						oModel.read("/Holidays");
+						oModel.create("/Holidays", oEntity, mParams);
 
-						// create an entry of the Products collection with the specified properties and values
-						// var oDate = new Date(sap.ui.getCore().byId("myDateInput").getValue());
-						// var oContext = oModel.createEntry("/Holidays", {
-						// 	properties: {
-						// 		zDate: oDate,
-						// 		Province: "ON",
-						// 		Holiday_Id: "1"
-						// 	}
-						// });
-						// // binding against this entity
-						// oModel.submitChanges({
-						// 	success: function (data) {
-						// 		sap.m.MessageToast.show("Record Created Successfully");
-						// 	},
-						// 	error: function (response) {
-						// 		sap.m.MessageToast.show("Error: " + response);
-						// 	}
-						// });
-						// // delete the created entity
-						// oModel.deleteCreatedEntry(oContext);
-
-						// oModel.create("/Holidays", oEntry, null, function () {
+						// oModel.create("/Holidays", oEntity, null, function () {
 						// 	sap.m.MessageToast.show("Record Created Successfully");
 						// }, function (err) {
 						// 	sap.m.MessageToast.show("Error: " + err);
@@ -512,5 +468,4 @@ sap.ui.define([
 			openDeleteDialog.open();
 		}
 	});
-
 });

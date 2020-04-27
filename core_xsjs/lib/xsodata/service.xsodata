@@ -1,3 +1,4 @@
 service {
 	"Holiday.Holiday" as "Holidays";
+	"Holiday.Holiday_md" as "Holiday_Master";
 }

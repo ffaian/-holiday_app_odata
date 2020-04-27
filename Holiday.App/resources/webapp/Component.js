@@ -13,8 +13,6 @@ sap.ui.define([
 			manifest: "json",
 			"config": {
 				"serviceUrl_odata": "../xsodata/service.xsodata",
-				//				https://hxehost:51061/xsodata/service.xsodata/$metadata
-				"serviceUrl_odata2": "../xsodata/service.xsodata/$metadata",
 				"serviceUrl": "../xsjs/Holiday_JSON.xsjs",
 				"sizeLimit": 500
 			}
@@ -32,8 +30,14 @@ sap.ui.define([
 			// enable routing
 			this.getRouter().initialize();
 
+			var oParams = {};
+			oParams.json = true;
+			oParams.defaultBindingMode = sap.ui.model.BindingMode.TwoWay;
+			oParams.defaultUpdateMethod = "PUT";
+			oParams.useBatch = false;
+
 			var oModel_odata = new ODataModel(
-				this.getMetadata().getConfig().serviceUrl_odata);
+				this.getMetadata().getConfig().serviceUrl_odata, oParams);
 			oModel_odata.attachMetadataLoaded(null, function () {
 				var oMetadata = oModel_odata.getServiceMetadata();
 				sap.m.MessageToast.show("whatever dude");
